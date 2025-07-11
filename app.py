@@ -66,3 +66,4 @@ if uploaded_file:
         st.error(f"❌ 加载文件出错：{e}")
 else:
     st.info("请上传包含完整字段的 Excel 文件，例如：工号、姓名、是否学习、性别、年龄、学历、残疾类别等。")
+
