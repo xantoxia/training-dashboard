@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+st.write("🚀 App is loading")
+
 st.set_page_config(page_title="培训情况分析", layout="wide")
 st.title("👥 人员培训与多样性分析仪表板")
 
