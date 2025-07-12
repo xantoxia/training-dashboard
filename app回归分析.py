@@ -93,29 +93,49 @@ st.markdown("""
 - **coef 为正值** 表示该特征提高学习概率，负值则表示降低。
 - 可结合 HR 管理经验进一步解释这些因素背后的意义。
 """)
-# 残疾类别学习率分析图
-st.subheader("🧠 各残疾类别的学习率对比")
+# ...前面代码保持不变...
 
-# 计算学习率
+# 残疾类别学习率分析图
+st.subheader("各残疾类别的学习率对比（含人数）")
+
+# 计算学习率与总人数
 disability_stats = (
     df.groupby("残疾类别")["是否学习编码"]
     .agg(['count', 'sum'])
     .rename(columns={'count': '总人数', 'sum': '学习人数'})
 )
 disability_stats["学习率（%）"] = (disability_stats["学习人数"] / disability_stats["总人数"]) * 100
+
+# 添加显示标签：学习率 + 人数
+disability_stats["标签"] = disability_stats.apply(
+    lambda row: f"{row['学习率（%）']:.1f}%（共 {int(row['总人数'])} 人）", axis=1
+)
+
+# 排序
 disability_stats = disability_stats.sort_values("学习率（%）", ascending=False)
 
 # 可视化
-fig_disability = px.bar(disability_stats, 
-                        x=disability_stats.index, 
-                        y="学习率（%）", 
-                        text="学习率（%）", 
-                        title="不同残疾类别的学习率对比",
-                        labels={"x": "残疾类别", "学习率（%）": "学习率 (%)"})
-fig_disability.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-fig_disability.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', yaxis_range=[0, 100])
+fig_disability = px.bar(
+    disability_stats,
+    x=disability_stats.index,
+    y="学习率（%）",
+    text="标签",
+    title="不同残疾类别的学习率对比（含人数）",
+    labels={"x": "残疾类别", "学习率（%）": "学习率 (%)"}
+)
+fig_disability.update_traces(textposition='outside')
+fig_disability.update_layout(
+    uniformtext_minsize=8,
+    uniformtext_mode='hide',
+    yaxis_range=[0, 100]
+)
 
 st.plotly_chart(fig_disability, use_container_width=True)
+
+# 补充说明
+st.markdown("""
+> 🔍 **说明**：学习率仅反映比例，**如样本人数较少（如“其他残疾”或“精神残疾”）时，学习率容易受到个别值影响**。请结合人数判断其参考价值。
+""")
 
 # 分析建议
 st.subheader("📌 分析结论与建议")
