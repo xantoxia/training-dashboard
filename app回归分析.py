@@ -137,6 +137,36 @@ st.markdown("""
 > 🔍 **说明**：学习率仅反映比例，**如样本人数较少（如“其他残疾”或“精神残疾”）时，学习率容易受到个别值影响**。请结合人数判断其参考价值。
 """)
 
+st.subheader("📉 高年资 + 低资位人群分析")
+
+# 提取资位中的数字（如 ZW1 → 1），便于比较
+df["资位数值"] = df["资位"].str.extract(r'ZW(\d+)').astype(float)
+
+# 筛选条件：年资 >= 10 且 资位数值 <= 4（ZW1~ZW4 视为低资位）
+mask_high_seniority_low_rank = (df["年资"] >= 10) & (df["资位数值"] <= 4)
+high_seniority_low_rank_df = df[mask_high_seniority_low_rank]
+
+# 群体规模与占比
+group_count = len(high_seniority_low_rank_df)
+total_count = len(df)
+group_ratio = group_count / total_count * 100
+
+# 学习参与率（“是否学习”字段编码为 1/0）
+participation_rate = high_seniority_low_rank_df["是否学习编码"].mean() * 100
+
+# 显示结果
+st.markdown(f"""
+- 符合条件的“高年资 + 低资位”员工数量：**{group_count} 人**
+- 占全体残障员工总数的比例：**{group_ratio:.2f}%**
+- 该群体的学习参与率：**{participation_rate:.1f}%**
+""")
+
+# 提示建议
+if group_ratio > 10:
+    st.info("✅ 建议将该群体纳入重点关注对象，并设计定制化学习推动机制。")
+else:
+    st.info("ℹ️ 该群体占比较小，可作为次重点群体关注，更多资源可投向更大比例群体。")
+
 # 分析建议
 st.subheader("📌 分析结论与建议")
 st.markdown("""
