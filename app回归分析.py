@@ -142,8 +142,8 @@ st.subheader("📉 高年资 + 低资位人群分析")
 # 提取资位中的数字（如 ZW1 → 1），便于比较
 df["资位数值"] = df["资位"].str.extract(r'ZW(\d+)').astype(float)
 
-# 筛选条件：年资 >= 10 且 资位数值 <= 4（ZW1~ZW4 视为低资位）
-mask_high_seniority_low_rank = (df["年资"] >= 5) & (df["资位数值"] <= 1)
+# 筛选条件：年资 >= 5 且 资位数值 <= 2（ZW1~ZW2 视为低资位）
+mask_high_seniority_low_rank = (df["年资"] >= 5) & (df["资位数值"] <= 2)
 high_seniority_low_rank_df = df[mask_high_seniority_low_rank]
 
 # 群体规模与占比
